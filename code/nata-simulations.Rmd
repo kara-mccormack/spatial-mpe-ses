@@ -54,7 +54,7 @@ runInfoObj_beta1 <- profRegr(yModel = "Normal",
         nSweeps = 100000,
         nBurn = 10000,
         data = NC_df_z,
-        output = "output_beta1_",
+        output = "output",
         covNames = covariate_names,
         nClusInit = 30,
         whichLabelSwitch="123",
@@ -62,10 +62,17 @@ runInfoObj_beta1 <- profRegr(yModel = "Normal",
         excludeY = TRUE, 
         seed = 1234)
 
-```
-
-```{r}
-
+# plotting to assess convergence of beta
+# (red plot)
+globalParsTrace(runInfoObj_beta1, 
+                parameters = "beta",
+                plotBurnIn = FALSE, 
+                whichBeta = 1)
+# autocorrelation plot
+# requires "coda" library
+library(coda)
+betaChain <- mcmc(read.table("output_beta.txt")[,1])
+autocorr.plot(betaChain)
 ```
 
 
