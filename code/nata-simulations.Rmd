@@ -37,6 +37,37 @@ colnames(NC_df_z) <- str_replace_all(colnames(NC_df_z)," " , "_")
 covariate_names <- colnames(NC_df_z)[-1]
 ```
 
+```{r}
+# Beta Plot 1
+# Goal: assess convergence of variable beta 
+# Specifications:
+# nSweeps: 100000
+# nBurn: 10000
+# data: z-transformed data ((value-mean)/sd)
+# nClusInit = 30
+
+# set working directory for output files
+setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Beta_1")
+# run profile regression
+runInfoObj_beta1 <- profRegr(yModel = "Normal",
+        xModel = "Normal",
+        nSweeps = 100000,
+        nBurn = 10000,
+        data = NC_df_z,
+        output = "output_beta1_",
+        covNames = covariate_names,
+        nClusInit = 30,
+        whichLabelSwitch="123",
+        run = TRUE,
+        excludeY = TRUE, 
+        seed = 1234)
+
+```
+
+```{r}
+
+```
+
 
 ```{r}
 # Simulation 1
@@ -50,19 +81,19 @@ nclusinit = c(5, 7, 10, 20, 40, 50)
 result = list()
 
 for (i in 1:length(nclusinit)){
-  paste0("runinfo_", nclusinit[i], "clusInit") <- profRegr(yModel = "Normal",
+  paste0("runinfo_", nclusinit[i], "clusInit", "_sim1") <- profRegr(yModel = "Normal",
         xModel = "Normal",
         nSweeps = 100000,
         nBurn = 10000,
         data = NC_df_z,
-        output = paste0("output", nclusinit[i], "init"),
+        output = paste0("output", nclusinit[i], "init", "_sim1_"),
         covNames = covariate_names,
         nClusInit = nclusinit[i],
         whichLabelSwitch="123",
         run = TRUE,
         excludeY = TRUE, 
         seed = 1234)
-  x <- paste0("runinfo_", nclusinit[i], "clusInit")
+  paste0("disSimObj", nclusinit[i], "clusInit", "_sim1_") <- paste0("runinfo_", nclusinit[i], "clusInit")
   y <- calcDissimilarityMatrix(x)
   z <- calcOptimalClustering(y)
   result[[i]] <- z$clustering
