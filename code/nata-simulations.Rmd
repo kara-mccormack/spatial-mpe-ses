@@ -73,6 +73,13 @@ globalParsTrace(runInfoObj_beta1,
 library(coda)
 betaChain <- mcmc(read.table("output_beta.txt")[,1])
 autocorr.plot(betaChain)
+
+# how many clusters?
+# calculate dissimilarity matrix
+dissimObj_beta1 = calcDissimilarityMatrix(runInfoObj_beta1)
+clusObj_beta1 = calcOptimalClustering(beta1)
+table(clusObj_beta1$clustering)
+
 ```
 
 
