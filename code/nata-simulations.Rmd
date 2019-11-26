@@ -90,21 +90,23 @@ for (i in 1:length(nClusInit)){
         run = TRUE,
         excludeY = TRUE, 
         seed = 1234)
-  margModelPosterior(runInfoObj)
 }
-mmp <- list()
-for(i in 1:length(nClusInit)) {
-  mmp[[i]] <- read.table(paste("init", nClusInit[i], "_margModPost.txt",
+
+# plot log posterior
+logPost = list()
+for(i in 1:length(nClusInit)){
+  logPost[[i]] <- read.table(paste("init", nClusInit[i], "_logPost.txt",
                                sep = ""))[,1]
 }
+# plotting
 plot(c(head(nClusInit, n = 1) -0.5, tail(nClusInit, n = 1) + 0.5),
-     c(min(unlist(mmp)), max(unlist(mmp))), type = "n",
-     ylab = "Log Marginal Model Posterior",
+     c(min(unlist(logPost)), max(unlist(logPost))), type = "n",
+     ylab = "Log Posterior",
      xlab = "Initial number of clusters", cex.lab = 1.3, xaxt = "n")
 axis(1, at = nClusInit, labels = nClusInit)
 for(i in 1:length(nClusInit)) {
-  boxplot(mmp[[i]], add = TRUE, at = nClusInit[i], pch = ".",
-          boxwex = 5, col = "coral2")
+  boxplot(logPost[[i]], add = TRUE, at = nClusInit[i], pch = ".",
+          boxwex = 5, col = "lightblue1")
 }
 ```
 
