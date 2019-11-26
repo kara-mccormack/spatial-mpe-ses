@@ -37,6 +37,36 @@ colnames(NC_df_z) <- str_replace_all(colnames(NC_df_z)," " , "_")
 covariate_names <- colnames(NC_df_z)[-1]
 ```
 
+```{r}
+# Beta Plot 1
+# Goal: assess convergence of variable beta 
+# Specifications:
+# nSweeps: 1000
+# nBurn: 100
+# data: z-transformed data ((value-mean)/sd)
+# nClusInit = 30
+
+# set working directory for output files
+setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Beta_1/")
+output.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Beta_1/"
+# run profile regression
+runInfoObj_beta1 <- profRegr(yModel = "Normal",
+        xModel = "Normal",
+        nSweeps = 1000,
+        nBurn = 100,
+        data = NC_df_z,
+        output = "output",
+        covNames = covariate_names,
+        nClusInit = 30,
+        whichLabelSwitch="123",
+        run = TRUE,
+        excludeY = TRUE, 
+        seed = 1234)
+
+```
+
+
+
 
 ```{r}
 # Simulation 1
@@ -45,29 +75,36 @@ covariate_names <- colnames(NC_df_z)[-1]
 setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Simulation1")
 
 # create vector of initial number of clusters
-nclusinit = c(5, 7, 10, 20, 40, 50)
-# initiate empty list for results
-result = list()
+nClusInit = c(5, 7, 10, 20, 40, 50)
 
-for (i in 1:length(nclusinit)){
-  paste0("runinfo_", nclusinit[i], "clusInit", "_sim1") <- profRegr(yModel = "Normal",
+for (i in 1:length(nClusInit)){
+  runInfoObj <- profRegr(yModel = "Normal",
         xModel = "Normal",
-        nSweeps = 100000,
-        nBurn = 10000,
+        nSweeps = 1000,
+        nBurn = 100,
         data = NC_df_z,
-        output = paste0("output", nclusinit[i], "init", "_sim1_"),
+        output = paste("init", nClusInit[i], sep = ""),
         covNames = covariate_names,
-        nClusInit = nclusinit[i],
+        nClusInit = nClusInit[i],
         whichLabelSwitch="123",
         run = TRUE,
         excludeY = TRUE, 
         seed = 1234)
-  paste0("disSimObj", nclusinit[i], "clusInit", "_sim1_") <- paste0("runinfo_", nclusinit[i], "clusInit")
-  y <- calcDissimilarityMatrix(x)
-  z <- calcOptimalClustering(y)
-  result[[i]] <- z$clustering
-  print("Initial clusters = ", nclusinit[i], " gives ", length(unique(z$clustering)), " final clusters. ")
-
+  margModelPosterior(runInfoObj)
+}
+mmp <- list()
+for(i in 1:length(nClusInit)) {
+  mmp[[i]] <- read.table(paste("init", nClusInit[i], "_margModPost.txt",
+                               sep = ""))[,1]
+}
+plot(c(head(nClusInit, n = 1) -0.5, tail(nClusInit, n = 1) + 0.5),
+     c(min(unlist(mmp)), max(unlist(mmp))), type = "n",
+     ylab = "Log Marginal Model Posterior",
+     xlab = "Initial number of clusters", cex.lab = 1.3, xaxt = "n")
+axis(1, at = nClusInit, labels = nClusInit)
+for(i in 1:length(nClusInit)) {
+  boxplot(mmp[[i]], add = TRUE, at = nClusInit[i], pch = ".",
+          boxwex = 5, col = "coral2")
 }
 ```
 
