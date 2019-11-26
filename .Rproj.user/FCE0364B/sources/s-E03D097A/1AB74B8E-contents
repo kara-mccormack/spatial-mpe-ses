@@ -1,0 +1,71 @@
+---
+title: "nata-simulations"
+author: "Kara E. McCormack"
+date: "11/25/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# load libraries
+library(PReMiuM)
+library(stringr)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+```{r}
+# set up paths
+data.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Data/"
+output.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Output/"
+
+# load z-transformed NC NATA data
+NC_df_z = read.csv(file.path(data.dir, "NC_NATA_wide_z_transform.csv"))[,-1]
+
+colnames(NC_df_z) <- colnames(NC_df)
+# need no spaces in pollutant names to plug into profile regression
+colnames(NC_df_z) <- str_replace_all(colnames(NC_df_z)," " , "_")
+
+# define covariate names
+covariate_names <- colnames(NC_df_z)[-1]
+```
+
+```{r}
+# bayesian profile regression
+# simulation
+
+# set working directory where output files will go
+setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Output/Scratch/scratch_bpr3")
+
+#
+nclusinit = c(5, 7, 10, 20, 30, 40, 50)
+result = list()
+for (i in 1:length(nclusinit)){
+  paste0("runinfo_", nclusinit[i], "clusInit") <- profRegr(yModel = "Normal",
+        xModel = "Normal",
+        nSweeps = 100000,
+        nBurn = 10000,
+        data = NC_df_z,
+        output = paste0("output", nclusinit[i], "init"),
+        covNames = covariate_names,
+        nClusInit = nclusinit[i],
+        whichLabelSwitch="123",
+        run = TRUE,
+        excludeY = TRUE, 
+        seed = 1234)
+  x <- paste0("runinfo_", nclusinit[i], "clusInit")
+  y <- calcDissimilarityMatrix(x)
+  z <- calcOptimalClustering(y)
+  result[[i]] <- z$clustering
+  print("Initial clusters = ", nclusinit[i], " gives ", length(unique(z$clustering)), " final clusters. ")
+  betaplots
+}
+```
+
+
+
