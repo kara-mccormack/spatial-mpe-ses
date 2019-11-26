@@ -1,0 +1,3 @@
+To build singularity image:
+
+singularity build --force --remote singularity.mpespatial.sif spatial-mpe-ses/singularity.mpespatial
