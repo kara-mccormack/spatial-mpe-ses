@@ -54,6 +54,40 @@ NC_df_long <- NC_df %>%
 ```
 
 ```{r}
+# join with type
+# boxplots for original data
+# add on type variable
+# need to make "Pollutant" names match those of poln_vrbs$nms
+# rename three pollutants who still don't match
+NC_df_long[NC_df_long$Pollutant == "x1.3.butadiene",]$Pollutant <- "1,3-butadiene"
+NC_df_long[NC_df_long$Pollutant == "methyl chloride .chloromethane.",]$Pollutant <- "methyl chloride"
+NC_df_long[NC_df_long$Pollutant == "xylenes .mixed isomers.",]$Pollutant <- "xylenes"
+
+# make sure names match
+unique(NC_df_long$Pollutant) == poln_vrbs$nms
+
+# prep for left join
+poln = poln_vrbs[,c("nms", "type")]
+colnames(poln)[1] <- "Pollutant"
+poln$Pollutant <- as.character(poln$Pollutant)
+
+# left join with type
+NC_df_long = NC_df_long %>%
+  left_join(poln) 
+
+head(NC_df_long)
+```
+
+```{r}
+# boxplot for original data
+p <- ggplot(NC_df_long, aes(x=Pollutant, y=Level, fill = type)) + 
+  geom_boxplot() + 
+  ggtitle("Boxplots of Raw Pollutant Variables")
+p
+```
+
+
+```{r}
 # add on type variable
 # need to make "Pollutant" names match those of poln_vrbs$nms
 # rename three pollutants who still don't match
