@@ -70,6 +70,7 @@ globalParsTrace(runInfoObj_beta1,
                 whichBeta = 1)
 # autocorrelation plot
 # requires "coda" library
+install.packages("coda")
 library(coda)
 betaChain <- mcmc(read.table("output_beta.txt")[,1])
 autocorr.plot(betaChain)
