@@ -43,9 +43,11 @@ covariate_names <- colnames(NC_df_z)[-1]
 # set working directory where output files will go
 setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/")
 
-#
+# create vector of initial number of clusters
 nclusinit = c(5, 7, 10, 20, 30, 40, 50)
+# initiate empty list for results
 result = list()
+
 for (i in 1:length(nclusinit)){
   paste0("runinfo_", nclusinit[i], "clusInit") <- profRegr(yModel = "Normal",
         xModel = "Normal",
@@ -64,7 +66,7 @@ for (i in 1:length(nclusinit)){
   z <- calcOptimalClustering(y)
   result[[i]] <- z$clustering
   print("Initial clusters = ", nclusinit[i], " gives ", length(unique(z$clustering)), " final clusters. ")
-  betaplots
+
 }
 ```
 
