@@ -66,14 +66,13 @@ runInfoObj_beta1 <- profRegr(yModel = "Normal",
 ```
 
 
-
-
 ```{r}
 # Simulation 1
 
 # set working directory where output files will go
-setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Simulation1")
+setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Simulation1/")
 
+working.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Simulation1/"
 # create vector of initial number of clusters
 nClusInit = c(5, 7, 10, 20, 40, 50)
 
@@ -95,9 +94,9 @@ for (i in 1:length(nClusInit)){
 # plot log posterior
 logPost = list()
 for(i in 1:length(nClusInit)){
-  logPost[[i]] <- read.table(paste("init", nClusInit[i], "_logPost.txt",
-                               sep = ""))[,1]
+  logPost[[i]] <- read.table(file.path(working.dir, paste0("init", nClusInit[i], "_logPost.txt")))[,1]
 }
+
 # plotting
 plot(c(head(nClusInit, n = 1) -0.5, tail(nClusInit, n = 1) + 0.5),
      c(min(unlist(logPost)), max(unlist(logPost))), type = "n",
@@ -108,6 +107,7 @@ for(i in 1:length(nClusInit)) {
   boxplot(logPost[[i]], add = TRUE, at = nClusInit[i], pch = ".",
           boxwex = 5, col = "lightblue1")
 }
+
 ```
 
 
