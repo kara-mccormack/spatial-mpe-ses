@@ -1,0 +1,28 @@
+---
+title: "nata-boxplots"
+author: "Kara E. McCormack"
+date: "11/26/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# set up paths
+data.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Data/"
+output.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Output/"
+
+# original data
+NC_df <- read_csv(file.path(data.dir, "NC_NATA_wide_total_conc.csv"))[,-1]
+
+# load z-transformed NC NATA data (mean)
+NC_df_z = read.csv(file.path(data.dir, "NC_NATA_wide_z_transform.csv"))[,-1]
+
+# load log-transformed NC NATA data
+NC_df_log = read.csv(file.path(data.dir, "NC_NATA_wide_log_transform.csv"))[,-1]
+
+
+```
+
