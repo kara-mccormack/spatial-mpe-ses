@@ -39,11 +39,10 @@ covariate_names <- colnames(NC_df_z)[-1]
 
 
 ```{r}
-# bayesian profile regression
-# simulation
+# Simulation 1
 
 # set working directory where output files will go
-setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/")
+setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Simulation1")
 
 # create vector of initial number of clusters
 nclusinit = c(5, 7, 10, 20, 40, 50)
