@@ -37,52 +37,6 @@ colnames(NC_df_z) <- str_replace_all(colnames(NC_df_z)," " , "_")
 covariate_names <- colnames(NC_df_z)[-1]
 ```
 
-```{r}
-# Beta Plot 1
-# Goal: assess convergence of variable beta 
-# Specifications:
-# nSweeps: 100000
-# nBurn: 10000
-# data: z-transformed data ((value-mean)/sd)
-# nClusInit = 30
-
-# set working directory for output files
-setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/Beta_1")
-# run profile regression
-runInfoObj_beta1 <- profRegr(yModel = "Normal",
-        xModel = "Normal",
-        nSweeps = 100000,
-        nBurn = 10000,
-        data = NC_df_z,
-        output = "output",
-        covNames = covariate_names,
-        nClusInit = 30,
-        whichLabelSwitch="123",
-        run = TRUE,
-        excludeY = TRUE, 
-        seed = 1234)
-
-# plotting to assess convergence of beta
-# (red plot)
-globalParsTrace(runInfoObj_beta1, 
-                parameters = "beta",
-                plotBurnIn = FALSE, 
-                whichBeta = 1)
-# autocorrelation plot
-# requires "coda" library
-install.packages("coda")
-library(coda)
-betaChain <- mcmc(read.table("output_beta.txt")[,1])
-autocorr.plot(betaChain)
-
-# how many clusters?
-# calculate dissimilarity matrix
-dissimObj_beta1 = calcDissimilarityMatrix(runInfoObj_beta1)
-clusObj_beta1 = calcOptimalClustering(beta1)
-table(clusObj_beta1$clustering)
-
-```
-
 
 ```{r}
 # Simulation 1
