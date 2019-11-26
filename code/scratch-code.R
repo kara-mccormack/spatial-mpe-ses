@@ -105,19 +105,20 @@ table(clusObj$clustering)
 
 ###### scratch bpr simulation
 library(PReMiuM)
-working.dir = "/Users/karamccormack/OneDrive - Duke University/Spatial LCM Paper/Output/Scratch/scratch_bpr/"
+
+working.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/example_logmarginalpost/"
 # generate sample data file
 inputs <- generateSampleDataFile(clusSummaryBernoulliDiscrete())
 # set working directory - temporary output files will live here
 setwd(working.dir)
 # number of initial clusters
-nClusInit <- c(10, 20, 50)
+nClusInit <- c(10, 20, 50, 75)
 # run simulation for each number of initial clusters
 for (i in 1:length(nClusInit)) { 
   runInfoObj <- profRegr(yModel = inputs$yModel, 
                          xModel = inputs$xModel, 
-                         nSweeps = 100, 
-                         nBurn = 100, 
+                         nSweeps = 10000, 
+                         nBurn = 10000, 
                          data = inputs$inputData, 
                          output = paste("init", nClusInit[i], sep = ""), 
                          covNames = inputs$covNames, 
@@ -127,7 +128,38 @@ for (i in 1:length(nClusInit)) {
   margModelPosterior(runInfoObj)
 }
 
+mmp <- list()
+for(i in 1:length(nClusInit)){
+  mmp[[i]] <- read.table(paste("init", nClusInit[i], "_margModPost.txt",
+                               sep = ""))[,1]
+}
+# plotting
+plot(c(head(nClusInit, n = 1) -0.5, tail(nClusInit, n = 1) + 0.5),
+     c(min(unlist(mmp)), max(unlist(mmp))), type = "n",
+     ylab = "Log Marginal Model Posterior",
+     xlab = "Initial number of clusters", cex.lab = 1.3, xaxt = "n")
+axis(1, at = nClusInit, labels = nClusInit)
+for(i in 1:length(nClusInit)) {
+  boxplot(mmp[[i]], add = TRUE, at = nClusInit[i], pch = ".",
+          boxwex = 5, col = "coral2")
+}
 
+# try alternate plotting
+logPost = list()
+for(i in 1:length(nClusInit)){
+  logPost[[i]] <- read.table(paste("init", nClusInit[i], "_logPost.txt",
+                               sep = ""))[,1]
+}
+# plotting
+plot(c(head(nClusInit, n = 1) -0.5, tail(nClusInit, n = 1) + 0.5),
+     c(min(unlist(logPost)), max(unlist(logPost))), type = "n",
+     ylab = "Log Posterior",
+     xlab = "Initial number of clusters", cex.lab = 1.3, xaxt = "n")
+axis(1, at = nClusInit, labels = nClusInit)
+for(i in 1:length(nClusInit)) {
+  boxplot(logPost[[i]], add = TRUE, at = nClusInit[i], pch = ".",
+          boxwex = 5, col = "lightblue1")
+}
 
 ### convergence of beta plots
 # load coda library
