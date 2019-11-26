@@ -35,12 +35,13 @@ colnames(NC_df_z) <- str_replace_all(colnames(NC_df_z)," " , "_")
 covariate_names <- colnames(NC_df_z)[-1]
 ```
 
+
 ```{r}
 # bayesian profile regression
 # simulation
 
 # set working directory where output files will go
-setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Output/Scratch/scratch_bpr3")
+setwd("/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/")
 
 #
 nclusinit = c(5, 7, 10, 20, 30, 40, 50)
