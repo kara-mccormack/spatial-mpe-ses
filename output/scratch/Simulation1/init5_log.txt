@@ -1,4 +1,4 @@
-Date and time: 2019-11-26 15:0037
+Date and time: 2019-11-26 16:1125
 
 Data file path: init5_input.txt
 
@@ -117,4 +117,4 @@ muTheta: 0
 sigmaTheta: 2.5
 dofTheta: 7
 
-1100 sweeps done in 23 seconds
+1100 sweeps done in 26 seconds
