@@ -305,27 +305,45 @@ colnames(NC_df_log) <- colnames(NC_df)
 # need no spaces in pollutant names to plug into profile regression
 colnames(NC_df_log) <- str_replace_all(colnames(NC_df_log)," " , "_")
 
+setwd("/Users/karamccormack/OneDrive - Duke University/Spatial LCM Paper/Output/Scratch/scratch_log_sweep20k_label123/")
 # nBurn = 10000
-# nSweeps = 500000
-# nClusInit = 30
-runInfoObj_log_burn10k_sweep50k_init30 = profRegr(yModel = "Normal",
+# nSweeps = 20000
+# nClusInit = 15
+
+runInfoObj_log_burn10k_sweep20k_init15 = profRegr(yModel = "Normal",
                                                  xModel = "Normal",
-                                                 nSweeps = 50000,
+                                                 nSweeps = 20000,
                                                  nBurn = 10000,
                                                  data = NC_df_log,
                                                  output = "output",
                                                  covNames = covariate_names,
-                                                 nClusInit = 30,
+                                                 nClusInit = 20,
+                                                 whichLabelSwitch="123",
                                                  run = TRUE,
                                                  excludeY = TRUE, 
                                                  seed = 1234)
 
 # calculate dissimilarity matrix
-dissimObj_log_burn10k_sweep50k_init30 = calcDissimilarityMatrix(runInfoObj_log_burn10k_sweep50k_init30)
+dissimObj_log_burn10k_sweep20k_init15 = calcDissimilarityMatrix(runInfoObj_log_burn10k_sweep20k_init15)
 # calculate optimal clustering
+clusObj_log_burn10k_sweep20k_init15_nomax = calcOptimalClustering(dissimObj_log_burn10k_sweep20k_init15)
+table(clusObj_log_burn10k_sweep20k_init15_nomax$clustering)
+
+runInfoObj_log_burn10k_sweep50k_init30 = profRegr(yModel = "Normal",
+                                                  xModel = "Normal",
+                                                  nSweeps = 50000,
+                                                  nBurn = 10000,
+                                                  data = NC_df_log,
+                                                  output = "output",
+                                                  covNames = covariate_names,
+                                                  nClusInit = 30,
+                                                  run = TRUE,
+                                                  excludeY = TRUE, 
+                                                  seed = 1234)
 
 # vary the max number of clusters allowed
 # nomax takes forever to run.
+# no label switching
 clusObj_log_burn10k_sweep50k_init30_nomax = calcOptimalClustering(dissimObj_log_burn10k_sweep50k_init30)
 table(clusObj_log_burn10k_sweep50k_init30_nomax$clustering)
 clusObj_log_burn10k_sweep50k_init30_max10 = calcOptimalClustering(dissimObj_burn10k_sweep100k_init30, maxNClusters = 10)
