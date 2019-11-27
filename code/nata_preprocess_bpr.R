@@ -24,8 +24,9 @@ library(ggplot2)
 library(tidyr)
 
 # set up paths
-data.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Data/"
-output.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/plots_figures/raw_boxplots/"
+data.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/data/"
+output.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/data/"
+output.dir.rawboxplots = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/plots_figures/raw_boxplots/"
 
 # upload NATA Data
 NC_df <- read_csv(file.path(data.dir, "NC_NATA_wide_total_conc.csv"))[,-1]
@@ -83,7 +84,77 @@ p <- ggplot(NC_df_long, aes(x=Pollutant, y=Level)) +
                                    size = 8)) +
   ggtitle("Boxplot of Raw Pollutants for NATA in NC")
 p
+# save boxplot of raw pollutant levels to .png
 ggsave(filename = file.path(output.dir, "nata_raw.png"),
+       plot = last_plot(),
+       width = 10.5,
+       height = 6.5)
+
+# boxplots of log levels
+# create long version of NC df with log transformation
+NC_df_log_long = NC_df %>%
+  gather(Pollutant, Level, `1,3-BUTADIENE`:`NICKEL COMPOUNDS`, -Tract) %>%
+  mutate(loglevel = log(Level))
+
+p_log = ggplot(NC_df_log_long, aes(x=Pollutant, y=loglevel)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1, 
+                                   size = 8)) +
+  ggtitle("Boxplot of Log-Level of Pollutants for NATA in NC")
+p_log
+# save boxplot of raw pollutant levels to .png
+ggsave(filename = file.path(output.dir.rawboxplots, "nata_log.png"),
+       plot = last_plot(),
+       width = 10.5,
+       height = 6.5)
+
+# boxplots of z-transformed data (mean)
+# create long dataset with z-transformation
+NC_df_z_long = NC_df %>%
+  gather(Pollutant, Level, `1,3-BUTADIENE`:`NICKEL COMPOUNDS`, -Tract) %>%
+  group_by(Pollutant) %>%
+  mutate(mean_level = mean(Level),
+         sd_level = sd(Level), 
+         z_level = (Level - mean(Level, na.rm = T))/sd(Level, na.rm = T)) %>%
+  select(Tract, Pollutant, z_level)
+
+# create boxplot of z-transformed data
+p_z = ggplot(NC_df_z_long, aes(x=Pollutant, y=z_level)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1, 
+                                   size = 8)) +
+  ggtitle("Boxplot of Z-Transformed Levels of Pollutants for NATA in NC")
+p_z
+
+# save boxplot of z-transformed pollutant data to .png
+ggsave(filename = file.path(output.dir.rawboxplots, "nata_z.png"),
+       plot = last_plot(),
+       width = 10.5,
+       height = 6.5)
+
+# boxplot of z-transformed data (using median)
+# create long dataset of z-transformed data (using median)
+NC_df_z_median_long = NC_df %>%
+  gather(Pollutant, Level, `1,3-BUTADIENE`:`NICKEL COMPOUNDS`, -Tract) %>%
+  group_by(Pollutant) %>%
+  mutate(mean_level = mean(Level),
+         sd_level = sd(Level), 
+         z_median_level = (Level - median(Level, na.rm = T))/sd(Level, na.rm = T)) %>%
+  select(Tract, Pollutant, z_median_level)
+
+# create boxplots
+p_z_median = ggplot(NC_df_z_median_long, aes(x=Pollutant, y=z_median_level)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1, 
+                                   size = 8)) +
+  ggtitle("Z-Transform (Median) Levels of Pollutants: NATA NC")
+p_z_median
+
+# save boxplot of z-transformed pollutant data to .png
+ggsave(filename = file.path(output.dir.rawboxplots, "nata_z_median.png"),
        plot = last_plot(),
        width = 10.5,
        height = 6.5)
