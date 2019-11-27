@@ -25,7 +25,7 @@ library(tidyr)
 
 # set up paths
 data.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Data/"
-output.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Data/"
+output.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/plots_figures/raw_boxplots/"
 
 # upload NATA Data
 NC_df <- read_csv(file.path(data.dir, "NC_NATA_wide_total_conc.csv"))[,-1]
@@ -64,3 +64,26 @@ NC_df_log_transform = NC_df %>%
 write.csv(NC_df_log_transform, 
           file = file.path(output.dir, "NC_NATA_wide_log_transform.csv"))
 
+# Single long dataset
+# containing raw, log, z(mean), and z(median) transformations
+NC_df_long = NC_df %>%
+  gather(Pollutant, Level, `1,3-BUTADIENE`:`NICKEL COMPOUNDS`, -Tract) %>%
+  group_by(Pollutant) %>%
+  mutate(mean_level = mean(Level),
+         sd_level = sd(Level), 
+         z_level = (Level - mean(Level, na.rm = T))/sd(Level, na.rm = T),
+         z_level_median = (Level - median(Level, na.rm = T))/sd(Level, na.rm = T),
+         log_level = log(Level))
+
+# boxplots of original levels. 
+p <- ggplot(NC_df_long, aes(x=Pollutant, y=Level)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1, 
+                                   size = 8)) +
+  ggtitle("Boxplot of Raw Pollutants for NATA in NC")
+p
+ggsave(filename = file.path(output.dir, "nata_raw.png"),
+       plot = last_plot(),
+       width = 10.5,
+       height = 6.5)
