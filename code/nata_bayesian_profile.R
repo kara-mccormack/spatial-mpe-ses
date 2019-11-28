@@ -329,6 +329,60 @@ dissimObj_log_burn10k_sweep20k_init15 = calcDissimilarityMatrix(runInfoObj_log_b
 clusObj_log_burn10k_sweep20k_init15_nomax = calcOptimalClustering(dissimObj_log_burn10k_sweep20k_init15)
 table(clusObj_log_burn10k_sweep20k_init15_nomax$clustering)
 
+library(coda)
+gelman.plot(runInfoObj_log_burn10k_sweep20k_init15)
+
+logpost = read.table("/Users/karamccormack/OneDrive - Duke University/Spatial LCM Paper/Output/Scratch/scratch_log_sweep20k_label123/output_logpost.txt")
+lp_mcmc = mcmc(logpost[,1])
+gelman.plot(lp_mcmc[,1], bin.width = 10, max.bins = 50)
+nchain(lp_mcmc)
+# note: "~/OneDrive - Duke University/Spatial LCM Paper/Code/updated_rdata/nata_bpr_11.27.19.RData"
+# contains rdata for above two runs
+
+# running after meeting 11/27/28
+# use log data, set alpha = 1
+# nBurn = 10000
+# nSweeps = 20000
+# nClusInit = 15
+setwd("/Users/karamccormack/OneDrive - Duke University/Spatial LCM Paper/Output/Scratch/scratch-alpha1-11.28.19/")
+runInfoObj_log_burn10k_sweep20k_init15_alpha1 = profRegr(yModel = "Normal",
+                                                         xModel = "Normal",
+                                                         nSweeps = 20000,
+                                                         nBurn = 10000,
+                                                         data = NC_df_log,
+                                                         output = "output",
+                                                         covNames = covariate_names,
+                                                         nClusInit = 15,
+                                                         alpha = 1,
+                                                         run = TRUE,
+                                                         excludeY = TRUE, 
+                                                         seed = 1234)
+dissimObj_log_burn10k_sweep20k_init15_alpha1 = calcDissimilarityMatrix(runInfoObj_log_burn10k_sweep20k_init15_alpha1)
+clusObj_log_burn10k_sweep20k_init15_alpha1 = calcOptimalClustering(dissimObj_log_burn10k_sweep20k_init15_alpha1)
+table(clusObj_log_burn10k_sweep20k_init15_alpha1$clustering)
+# got 17 clusters... interesting. 
+# I'll try again below with nClusInit = 30.
+# I will overwrite the output files in the working directory. 
+# output files for the run below are again in: "/Users/karamccormack/OneDrive - Duke University/Spatial LCM Paper/Output/Scratch/scratch-alpha1-11.28.19/"
+runInfoObj_log_burn10k_sweep20k_init30_alpha1 = profRegr(yModel = "Normal",
+                                                         xModel = "Normal",
+                                                         nSweeps = 20000,
+                                                         nBurn = 10000,
+                                                         data = NC_df_log,
+                                                         output = "output",
+                                                         covNames = covariate_names,
+                                                         nClusInit = 30,
+                                                         alpha = 1,
+                                                         run = TRUE,
+                                                         excludeY = TRUE, 
+                                                         seed = 1234)
+dissimObj_log_burn10k_sweep20k_init30_alpha1 = calcDissimilarityMatrix(runInfoObj_log_burn10k_sweep20k_init30_alpha1)
+clusObj_log_burn10k_sweep20k_init30_alpha1 = calcOptimalClustering(dissimObj_log_burn10k_sweep20k_init30_alpha1)
+table(clusObj_log_burn10k_sweep20k_init30_alpha1$clustering)
+# got 9 clusters, yay!
+# try again with 30k sweeps.
+
+# set this up later!
 runInfoObj_log_burn10k_sweep50k_init30 = profRegr(yModel = "Normal",
                                                   xModel = "Normal",
                                                   nSweeps = 50000,
