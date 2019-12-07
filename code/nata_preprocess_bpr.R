@@ -139,9 +139,7 @@ ggsave(filename = file.path(output.dir.rawboxplots, "nata_z.png"),
 NC_df_z_median_long = NC_df %>%
   gather(Pollutant, Level, `1,3-BUTADIENE`:`NICKEL COMPOUNDS`, -Tract) %>%
   group_by(Pollutant) %>%
-  mutate(mean_level = mean(Level),
-         sd_level = sd(Level), 
-         z_median_level = (Level - median(Level, na.rm = T))/sd(Level, na.rm = T)) %>%
+  mutate(z_median_level = (Level - median(Level, na.rm = T))/sd(Level, na.rm = T)) %>%
   select(Tract, Pollutant, z_median_level)
 
 # create boxplots

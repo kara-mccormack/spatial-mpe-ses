@@ -33,7 +33,7 @@ NC_df_z = read.csv(file.path(data.dir, "NC_NATA_wide_z_transform.csv"))[,-1]
 # load log-transformed NC NATA data
 NC_df_log = read.csv(file.path(data.dir, "NC_NATA_wide_log_transform.csv"))[,-1]
 
-
+head(NC_df)
 ```
 
 ```{r}
@@ -45,12 +45,13 @@ NC_df$Tract <- factor(NC_df$Tract)
 NC_df_long <- NC_df %>%
   gather(Pollutant,
          Level,
-         X1.3.BUTADIENE:XYLENES_.MIXED_ISOMERS.) %>% # keep the cluster column - need this for plotting
+         1.3.BUTADIENE:XYLENES_.MIXED_ISOMERS.) %>% # keep the cluster column - need this for plotting
   mutate(Pollutant = tolower(str_replace_all(Pollutant, "_", " "))) 
 
 # note, this still has cluster in it. This is the data where I
 # put the clusters on it (result from bayesian profile regression)
 # can ignore cluster column for boxplots plotting
+
 ```
 
 ```{r}
