@@ -439,6 +439,7 @@ clusObj_log_burn10k_sweep20k_init35_alpha1_switch123 = calcOptimalClustering(dis
 table(clusObj_log_burn10k_sweep20k_init35_alpha1_switch123$clustering)
 # got 8 clusters!
 
+##########################################
 # add clusters to dataset, rename column to "cluster"
 NC_df = cbind(NC_df, clusObj$clustering)
 names(NC_df)[ncol(NC_df)] = "Cluster"
