@@ -401,19 +401,43 @@ dissimObj_log_burn10k_sweep20k_init30_alpha1_switch123 = calcDissimilarityMatrix
 clusObj_log_burn10k_sweep20k_init30_alpha1_switch123 = calcOptimalClustering(dissimObj_log_burn10k_sweep20k_init30_alpha1_switch123)
 table(clusObj_log_burn10k_sweep20k_init30_alpha1_switch123$clustering)
 # got 9 clusters!
-# try again with sweep 30k.
+# try again with exact same inputs.
+runInfoObj_log_burn10k_sweep20k_init30_alpha1_switch123_v2 = profRegr(yModel = "Normal",
+                                                                   xModel = "Normal",
+                                                                   nSweeps = 20000,
+                                                                   nBurn = 10000,
+                                                                   data = NC_df_log,
+                                                                   output = "output",
+                                                                   covNames = covariate_names,
+                                                                   nClusInit = 30,
+                                                                   run = TRUE,
+                                                                   excludeY = TRUE, 
+                                                                   seed = 1234,
+                                                                   alpha = 1,
+                                                                   whichLabelSwitch = "123")
+dissimObj_log_burn10k_sweep20k_init30_alpha1_switch123_v2 = calcDissimilarityMatrix(runInfoObj_log_burn10k_sweep20k_init30_alpha1_switch123_v2)
+clusObj_log_burn10k_sweep20k_init30_alpha1_switch123_v2 = calcOptimalClustering(dissimObj_log_burn10k_sweep20k_init30_alpha1_switch123_v2)
+table(clusObj_log_burn10k_sweep20k_init30_alpha1_switch123_v2$clustering)
+# yesss got 9 clusters again, exact same table. 
 
-# vary the max number of clusters allowed
-# nomax takes forever to run.
-# no label switching
-clusObj_log_burn10k_sweep50k_init30_nomax = calcOptimalClustering(dissimObj_log_burn10k_sweep50k_init30)
-table(clusObj_log_burn10k_sweep50k_init30_nomax$clustering)
-clusObj_log_burn10k_sweep50k_init30_max10 = calcOptimalClustering(dissimObj_burn10k_sweep100k_init30, maxNClusters = 10)
-table(clusObj_burn10k_sweep100k_init30_max10$clustering)
-clusObj_burn10k_sweep100k_init30_max20 = calcOptimalClustering(dissimObj_burn10k_sweep100k_init30, maxNClusters = 20)
-table(clusObj_burn10k_sweep100k_init30_max20$clustering)
-
-##### stopped here 10/19/19
+# now try again with init 35 clusters
+runInfoObj_log_burn10k_sweep20k_init35_alpha1_switch123 = profRegr(yModel = "Normal",
+                                                                      xModel = "Normal",
+                                                                      nSweeps = 20000,
+                                                                      nBurn = 10000,
+                                                                      data = NC_df_log,
+                                                                      output = "output",
+                                                                      covNames = covariate_names,
+                                                                      nClusInit = 35,
+                                                                      run = TRUE,
+                                                                      excludeY = TRUE, 
+                                                                      seed = 1234,
+                                                                      alpha = 1,
+                                                                      whichLabelSwitch = "123")
+dissimObj_log_burn10k_sweep20k_init35_alpha1_switch123 = calcDissimilarityMatrix(runInfoObj_log_burn10k_sweep20k_init35_alpha1_switch123)
+clusObj_log_burn10k_sweep20k_init35_alpha1_switch123 = calcOptimalClustering(dissimObj_log_burn10k_sweep20k_init35_alpha1_switch123)
+table(clusObj_log_burn10k_sweep20k_init35_alpha1_switch123$clustering)
+# got 8 clusters!
 
 # add clusters to dataset, rename column to "cluster"
 NC_df = cbind(NC_df, clusObj$clustering)
