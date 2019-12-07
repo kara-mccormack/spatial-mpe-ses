@@ -383,9 +383,10 @@ table(clusObj_log_burn10k_sweep20k_init30_alpha1$clustering)
 # try again with 30k sweeps.
 
 # set this up later!
-runInfoObj_log_burn10k_sweep50k_init30 = profRegr(yModel = "Normal",
+setwd("/Users/karamccormack/OneDrive - Duke University/Spatial LCM Paper/Output/Scratch/scratch_bpr/")
+runInfoObj_log_burn10k_sweep20k_init30_alpha1_switch123 = profRegr(yModel = "Normal",
                                                   xModel = "Normal",
-                                                  nSweeps = 50000,
+                                                  nSweeps = 20000,
                                                   nBurn = 10000,
                                                   data = NC_df_log,
                                                   output = "output",
@@ -393,7 +394,14 @@ runInfoObj_log_burn10k_sweep50k_init30 = profRegr(yModel = "Normal",
                                                   nClusInit = 30,
                                                   run = TRUE,
                                                   excludeY = TRUE, 
-                                                  seed = 1234)
+                                                  seed = 1234,
+                                                  alpha = 1,
+                                                  whichLabelSwitch = "123")
+dissimObj_log_burn10k_sweep20k_init30_alpha1_switch123 = calcDissimilarityMatrix(runInfoObj_log_burn10k_sweep20k_init30_alpha1_switch123)
+clusObj_log_burn10k_sweep20k_init30_alpha1_switch123 = calcOptimalClustering(dissimObj_log_burn10k_sweep20k_init30_alpha1_switch123)
+table(clusObj_log_burn10k_sweep20k_init30_alpha1_switch123$clustering)
+# got 9 clusters!
+# try again with sweep 30k.
 
 # vary the max number of clusters allowed
 # nomax takes forever to run.
