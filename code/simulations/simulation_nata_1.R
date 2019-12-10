@@ -30,26 +30,25 @@ NC_df_log = read.csv(file.path(data.dir, "NC_NATA_wide_log_transform.csv"))[,-1]
 covariate_names <- colnames(NC_df_log)[-1]
 
 # simulation 1
-n = 10 # set number of simulations desired
-
+n = 10000 # set number of simulations desired
 # set prior values
 set.seed(678)
 # create reproducible vector of seeds for simulation
 # seed vector will be of length n 
 seed = sample(1:999999, size = n, replace = F)
-nBurn = 10000
-nSweeps = c(50,70)
-data = NC_df_log
-output = "output"
-covNames = covariate_names
+nBurn = 10000 # number of burn iterations
+nSweeps = 80000 # number of sweeps of MCMC algorithm
+data = NC_df_log # assign log transformed dataset
+output = "output" # assign prefix for temporary output .txt files
+covNames = covariate_names # assign covariate names from data frame
 num_clusters = rep(0,n) # create empty vector for final # of clusters found
+
 # simulation
-for(j in nSweeps){
   for(i in 1:n){
     runInfoObj = profRegr(yModel = "Normal", 
                           xModel = "Normal",
-                          nSweeps = nSweeps[j],
-                          nBurn = 10,
+                          nSweeps = nSweeps,
+                          nBurn = nBurn,
                           data = NC_df_log,
                           output = "output",
                           covNames = covariate_names,
@@ -62,10 +61,9 @@ for(j in nSweeps){
     clusObj = calcOptimalClustering(dissimObj)
     num_clusters[i] <- max(unique(clusObj$clustering))
   }
-}
 
 # create boxplot dataframe for ggplot
-sweeps = rep(nSweeps, n)
+sweeps = rep(nSweeps, n) # create a vector of the number of sweeps, repeated n times
 dat = as.data.frame(cbind(num_clusters, sweeps))
 
 p <- ggplot(dat, aes(x=as.factor(sweeps), y=num_clusters)) + 
