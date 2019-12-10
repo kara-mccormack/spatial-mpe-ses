@@ -12,6 +12,7 @@
 # load libraries
 library(PReMiuM)
 library(stringr)
+library(ggplot2)
 
 # set up paths
 data.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Data/"
@@ -29,5 +30,45 @@ NC_df_log = read.csv(file.path(data.dir, "NC_NATA_wide_log_transform.csv"))[,-1]
 covariate_names <- colnames(NC_df_log)[-1]
 
 # simulation 1
+n = 10 # set number of simulations desired
 
+# set prior values
+set.seed(678)
+# create reproducible vector of seeds for simulation
+# seed vector will be of length n 
+seed = sample(1:999999, size = n, replace = F)
+nBurn = 10000
+nSweeps = c(50,70)
+data = NC_df_log
+output = "output"
+covNames = covariate_names
+num_clusters = rep(0,n) # create empty vector for final # of clusters found
+# simulation
+for(j in nSweeps){
+  for(i in 1:n){
+    runInfoObj = profRegr(yModel = "Normal", 
+                          xModel = "Normal",
+                          nSweeps = nSweeps[j],
+                          nBurn = 10,
+                          data = NC_df_log,
+                          output = "output",
+                          covNames = covariate_names,
+                          nClusInit = 35,
+                          whichLabelSwitch="123",
+                          run = TRUE,
+                          excludeY = TRUE, 
+                          seed = seed[i])
+    dissimObj = calcDissimilarityMatrix(runInfoObj)
+    clusObj = calcOptimalClustering(dissimObj)
+    num_clusters[i] <- max(unique(clusObj$clustering))
+  }
+}
+
+# create boxplot dataframe for ggplot
+sweeps = rep(nSweeps, n)
+dat = as.data.frame(cbind(num_clusters, sweeps))
+
+p <- ggplot(dat, aes(x=as.factor(sweeps), y=num_clusters)) + 
+  geom_boxplot()
+p
 
