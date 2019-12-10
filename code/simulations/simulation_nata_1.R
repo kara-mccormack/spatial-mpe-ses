@@ -9,6 +9,10 @@
 #   
 ###########################################################
 
+# Goals:
+# 1. Run a simulation of bayesian profile regression using the 
+#     PReMiuM package on the NATA data. Use 50000, 75000, and 100000
+#     sweeps and create a final boxplot of the results
 # load libraries
 library(PReMiuM)
 library(stringr)
@@ -37,17 +41,17 @@ set.seed(678)
 # seed vector will be of length n 
 seed = sample(1:999999, size = n, replace = F)
 nBurn = 10000 # number of burn iterations
-nSweeps = 80000 # number of sweeps of MCMC algorithm
+nSweeps_1 = 80000 # number of sweeps of MCMC algorithm
 data = NC_df_log # assign log transformed dataset
 output = "output" # assign prefix for temporary output .txt files
 covNames = covariate_names # assign covariate names from data frame
-num_clusters = rep(0,n) # create empty vector for final # of clusters found
+num_clusters_1 = rep(0,n) # create empty vector for final # of clusters found
 
-# simulation
+# run with 80000 sweeps
   for(i in 1:n){
     runInfoObj = profRegr(yModel = "Normal", 
                           xModel = "Normal",
-                          nSweeps = nSweeps,
+                          nSweeps = nSweeps_1,
                           nBurn = nBurn,
                           data = NC_df_log,
                           output = "output",
@@ -59,12 +63,36 @@ num_clusters = rep(0,n) # create empty vector for final # of clusters found
                           seed = seed[i])
     dissimObj = calcDissimilarityMatrix(runInfoObj)
     clusObj = calcOptimalClustering(dissimObj)
-    num_clusters[i] <- max(unique(clusObj$clustering))
+    num_clusters_1[i] <- max(unique(clusObj$clustering))
   }
 
+# run a second time with 100,000 sweeps
+nSweeps_2 = 100000
+num_clusters_2 = rep(0,n)
+
+# run with 100000 sweeps 
+for(i in 1:n){
+  runInfoObj = profRegr(yModel = "Normal", 
+                        xModel = "Normal",
+                        nSweeps = nSweeps_2,
+                        nBurn = nBurn,
+                        data = NC_df_log,
+                        output = "output",
+                        covNames = covariate_names,
+                        nClusInit = 35,
+                        whichLabelSwitch="123",
+                        run = TRUE,
+                        excludeY = TRUE, 
+                        seed = seed[i])
+  dissimObj = calcDissimilarityMatrix(runInfoObj)
+  clusObj = calcOptimalClustering(dissimObj)
+  num_clusters_2[i] <- max(unique(clusObj$clustering))
+}
+
 # create boxplot dataframe for ggplot
-sweeps = rep(nSweeps, n) # create a vector of the number of sweeps, repeated n times
-dat = as.data.frame(cbind(num_clusters, sweeps))
+sweeps = c(rep(nSweeps_1, n), rep(nSweeps_2, n)) # create a vector of the number of sweeps, repeated n times
+num_clusters = c(num_clusters_1, num_clusters_2)
+dat = as.data.frame(cbind(num_clusters, sweeps)) # bring them together in data frame
 
 p <- ggplot(dat, aes(x=as.factor(sweeps), y=num_clusters)) + 
   geom_boxplot()
