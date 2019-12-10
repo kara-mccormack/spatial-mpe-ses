@@ -1,0 +1,19 @@
+Cluster Notes
+
+Uploading file to cluster
+
+Need to be sitting in the folder on personal machine where file is 
+located. Then:
+
+scp filename kem81@dcc-slogin-02.oit.duke.edu:~/spatial-mpe-ses
+
+Getting into R in the cluster
+Once in compute node (can be in working directory, wherever data or R 
+scripts are located in cluster): 
+
+module load R/3.5.2
+
+R
+
+Once in R, can simply install.packages(). Then the next time you
+load R, can just library() to get packages. 
