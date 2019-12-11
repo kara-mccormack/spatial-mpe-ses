@@ -17,3 +17,17 @@ R
 
 Once in R, can simply install.packages(). Then the next time you
 load R, can just library() to get packages. 
+
+
+ssh kem81@dcc-slogin-01.oit.duke.edu
+ srun --partition biostat --pty /bin/bash
+ tmux new
+ hostname -A
+singularity run library://granek/default/mar1_rnaseq:latest
+
+(on local machine)
+ssh -L PORT:COMPUTE_HOSTNAME:PORT NETID@dcc-slogin-01.oit.duke.edu
+
+ssh -L 8780:dcc-biostat-02.dscr.duke.local:8780 kem81@dcc-slogin-01.oit.duke.edu
+
+dcc-biostat-02.dscr.duke.local 

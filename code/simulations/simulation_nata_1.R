@@ -34,14 +34,14 @@ NC_df_log = read.csv(file.path(data.dir, "NC_NATA_wide_log_transform.csv"))[,-1]
 covariate_names <- colnames(NC_df_log)[-1]
 
 # simulation 1
-n = 10000 # set number of simulations desired
+n = 1 # set number of simulations desired
 # set prior values
 set.seed(678)
 # create reproducible vector of seeds for simulation
 # seed vector will be of length n 
 seed = sample(1:999999, size = n, replace = F)
-nBurn = 10000 # number of burn iterations
-nSweeps_1 = 80000 # number of sweeps of MCMC algorithm
+nBurn = 5 # number of burn iterations
+nSweeps_1 = 40 # number of sweeps of MCMC algorithm
 data = NC_df_log # assign log transformed dataset
 output = "output" # assign prefix for temporary output .txt files
 covNames = covariate_names # assign covariate names from data frame
@@ -97,4 +97,40 @@ dat = as.data.frame(cbind(num_clusters, sweeps)) # bring them together in data f
 p <- ggplot(dat, aes(x=as.factor(sweeps), y=num_clusters)) + 
   geom_boxplot()
 p
+
+# scratch
+
+myfunction <- function(seed_1) {
+  log <- capture.output({
+    runInfoObj = profRegr(yModel = "Normal", 
+                          xModel = "Normal",
+                          nSweeps = nSweeps_1,
+                          nBurn = nBurn,
+                          data = NC_df_log,
+                          output = "output",
+                          covNames = covariate_names,
+                          nClusInit = 35,
+                          whichLabelSwitch="123",
+                          run = TRUE,
+                          excludeY = TRUE, 
+                          seed = seed_1,
+                          nProgress = nSweeps_1+1);
+  })
+  
+  dissimObj = calcDissimilarityMatrix(runInfoObj)
+  log2 <- capture.output({
+    clusObj = calcOptimalClustering(dissimObj);
+  })
+  num_clusters_1 <- max(unique(clusObj$clustering))
+  return(num_clusters_1)
+}
+
+myfunction(1)
+library(parallel)
+
+seed_vec = rep(2,2)
+num_cores = detectCores()
+results = mclapply(seed_vec, myfunction, mc.cores = num_cores)
+
+profRegr
 
