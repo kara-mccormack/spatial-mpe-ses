@@ -21,7 +21,7 @@ library(ggplot2)
 # set up paths
 data.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/Data/"
 # output.dir is where temporary output (.txt) files will go from 'profRegr' command
-output.dir = "/Users/karamccormack/OneDrive - Duke University/Spatial LCM Paper/Output/Scratch/scratch_sim/"
+output.dir = "/Users/karamccormack/Box/SES-environment/Spatial LCM Paper/v2/spatial-mpe-ses/output/scratch/scratch1/"
 # setwd to where the output (.txt) files should go
 setwd(output.dir)
 
@@ -40,18 +40,18 @@ set.seed(678)
 # create reproducible vector of seeds for simulation
 # seed vector will be of length n 
 seed = sample(1:999999, size = n, replace = F)
-nBurn = 5 # number of burn iterations
-nSweeps_1 = 40 # number of sweeps of MCMC algorithm
+nBurn = 10000 # number of burn iterations
+nSweeps = 20000 # number of sweeps of MCMC algorithm
 data = NC_df_log # assign log transformed dataset
 output = "output" # assign prefix for temporary output .txt files
 covNames = covariate_names # assign covariate names from data frame
-num_clusters_1 = rep(0,n) # create empty vector for final # of clusters found
+num_clusters = rep(0,n) # create empty vector for final # of clusters found
 
 # run with 80000 sweeps
   for(i in 1:n){
     runInfoObj = profRegr(yModel = "Normal", 
                           xModel = "Normal",
-                          nSweeps = nSweeps_1,
+                          nSweeps = nSweeps,
                           nBurn = nBurn,
                           data = NC_df_log,
                           output = "output",
@@ -65,6 +65,21 @@ num_clusters_1 = rep(0,n) # create empty vector for final # of clusters found
     clusObj = calcOptimalClustering(dissimObj)
     num_clusters_1[i] <- max(unique(clusObj$clustering))
   }
+
+# plot the number of clusters by number of sweeps
+nClustersSweep<-read.table("output_nClusters.txt")
+head(nClustersSweep)
+nClusters_dat = as.data.frame(cbind(sweeps = seq(1:20000), nClusters = nClustersSweep))
+# try subsetting every 20th sweep
+nClusters_dat2 = nClusters_dat[seq(1,20000, by = 20),]
+p <- ggplot(data = nClusters_dat2, 
+            aes(x = sweeps, y = V1)) + 
+  geom_line(color = "#00AFBB", size = .5) + 
+  stat_smooth(color = "#FC4E07", 
+              fill = "#FC4E07",
+              method = "loess") +
+  labs(y="Number of Clusters", x = "Number of Sweeps")
+p
 
 # run a second time with 100,000 sweeps
 nSweeps_2 = 100000
