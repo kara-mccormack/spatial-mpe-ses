@@ -1,0 +1,11 @@
+Activity Log
+
+12/11/19
+
+-Figured out how to log in to RStudio on the cluster, however when I try to run the simulation many times (on different cores), it seems to be taking just as long as it did on my computer. Not sure if my code to parallelize the processing is incorrect. 
+
+- Asked Tom Milledge to install PReMiuM on R/3.5.2. He installed it so now I can run R code through slurm. Need to get my R code up and running and figure out which simulations I need. 
+
+- Still need to figure out what will provide some indication of consistency of clustering. Maybe I can run it 10 times with 20,000 sweeps and just see what I get in terms of number of clusters. Can probably do this on my own computer. 
+
+-Ask josh how you leave the code up and running and close my computer and log back in. 
