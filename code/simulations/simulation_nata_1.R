@@ -77,17 +77,17 @@ b3 = cbind(b[[3]], nclusinit = rep(nClusInitVec[3], dim(b[[3]])[1]))
 b4 = cbind(b[[4]], nclusinit = rep(nClusInitVec[4], dim(b[[4]])[1]))
 b_full = rbind(b1, b2, b3, b4)
 
-# create plot of results
+# create overall plot of results
 p <- ggplot(data = b_full, 
             aes(x = sweeps, y = V1)) + 
-  facet_wrap(~nClusInit) +
+  facet_wrap(~nclusinit) +
   geom_line(color = "#00AFBB", size = .5) + 
   stat_smooth(color = "#FC4E07", 
               fill = "#FC4E07",
               method = "loess") +
   labs(y="Number of Clusters", x = "Number of Sweeps (After Burn-In)") +
-  annotate("text", x = nSweeps/10, y = max(nClusters_dat2$V1)-3, label = paste0("nClusInit = ", nClusInit)) 
-
+  ggtitle("Number of Clusters by Number of Sweeps for \n Different Number of Initial Clusters")
+p
 
 
 

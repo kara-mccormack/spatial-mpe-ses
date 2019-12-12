@@ -228,3 +228,40 @@ autocorr.plot(betaChain, main = paste(nSweeps,
                                       initial_clusters[i], 
                                       "Initial Clusters", 
                                       sep = ""))
+
+# scratch
+
+myfunction <- function(seed_1) {
+  log <- capture.output({
+    runInfoObj = profRegr(yModel = "Normal", 
+                          xModel = "Normal",
+                          nSweeps = nSweeps_1,
+                          nBurn = nBurn,
+                          data = NC_df_log,
+                          output = "output",
+                          covNames = covariate_names,
+                          nClusInit = 35,
+                          whichLabelSwitch="123",
+                          run = TRUE,
+                          excludeY = TRUE, 
+                          seed = seed_1,
+                          nProgress = nSweeps_1+1);
+  })
+  
+  dissimObj = calcDissimilarityMatrix(runInfoObj)
+  log2 <- capture.output({
+    clusObj = calcOptimalClustering(dissimObj);
+  })
+  num_clusters_1 <- max(unique(clusObj$clustering))
+  return(num_clusters_1)
+}
+
+myfunction(1)
+library(parallel)
+
+seed_vec = rep(2,2)
+num_cores = detectCores()
+results = mclapply(seed_vec, myfunction, mc.cores = num_cores)
+
+profRegr
+
