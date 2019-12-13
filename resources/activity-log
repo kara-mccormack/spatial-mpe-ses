@@ -9,3 +9,7 @@ Activity Log
 - Still need to figure out what will provide some indication of consistency of clustering. Maybe I can run it 10 times with 20,000 sweeps and just see what I get in terms of number of clusters. Can probably do this on my own computer. 
 
 -Ask josh how you leave the code up and running and close my computer and log back in. 
+
+- Can meet up with Menjie Xu (ML class) to discuss how she plotted the airbnb data using ggmap (also used function "getmaps"). Ask her if the lats and longs already came in the data or if she got them herself from addresses. 
+
+- Read causal inference paper (Dominici, Zigler) on whether air pollution regulations was having a causal effect on actual air pollution and all-cause mortality in diabetes patients. Brainstorm more about how to extend this to my own research.
