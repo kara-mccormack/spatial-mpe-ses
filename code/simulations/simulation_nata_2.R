@@ -76,6 +76,7 @@ dat_20ksweeps_nClusInit35 = cbind(sweep = 1:nSweeps,
 colnames(dat_20ksweeps_nClusInit35)[2] <- "alpha"
 colnames(dat_20ksweeps_nClusInit35)[3] <- "kappa"
 
+# subset by every 20 sweeps
 dat_20ksweeps_nClusInit35_subset = dat[seq(1, nSweeps, by = 20),]
 
 # plot posterior distribution of alpha
@@ -94,4 +95,48 @@ p_kappa = ggplot(dat_20ksweeps_nClusInit35_subset, aes(x = sweep, y = kappa)) +
        x = "Sweeps")
 p_kappa
 
+
 # see if alpha stabilizes for 50,000 sweeps.
+nSweeps = 50000
+output = "output_50ksweeps"
+runInfoObj_50ksweeps = profRegr(yModel = "Normal", 
+                        xModel = "Normal",
+                        nSweeps = nSweeps,
+                        nBurn = nBurn,
+                        data = data,
+                        output = output,
+                        covNames = covNames,
+                        nClusInit = nClusInit,
+                        whichLabelSwitch="123",
+                        run = TRUE,
+                        excludeY = TRUE, 
+                        seed = seed)
+
+# put together pertinent information about this run
+alpha_50k = read.table("output_50ksweeps_alpha.txt")
+kappa1_50k = read.table("output_50ksweeps_kappa1.txt")
+logpost_50k = read.table("output_50ksweeps_logPost.txt")
+
+dat_50ksweeps_nClusInit35 = cbind(sweep = 1:nSweeps, 
+                                  alpha = alpha_50k, 
+                                  kappa = kappa1_50k, 
+                                  logPost = logpost_50k[,1],
+                                  logLike = logpost_50k[,2],
+                                  logPrior = logpost_50k[,3],
+                                  nClusInit = rep(nClusInit, nSweeps))
+colnames(dat_50ksweeps_nClusInit35)[2] <- "alpha"
+colnames(dat_50ksweeps_nClusInit35)[3] <- "kappa"
+# subset by every 50 sweeps
+dat_50ksweeps_nClusInit35_subset = dat_50ksweeps_nClusInit35[seq(1, nSweeps, by = 50),]
+
+#plot posterior distribution of alpha
+p_50_alpha = ggplot(dat_50ksweeps_nClusInit35_subset, 
+           aes(x = sweep, y = alpha)) + 
+  geom_line(color = "darkorange1") +
+  theme_minimal() +
+  labs(y = "Posterior Alpha Distribution",
+       x = "Sweeps")
+p_50_alpha
+
+# we see an increase but not really any convergence 
+# of alpha with 50k sweeps
