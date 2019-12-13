@@ -439,6 +439,43 @@ clusObj_log_burn10k_sweep20k_init35_alpha1_switch123 = calcOptimalClustering(dis
 table(clusObj_log_burn10k_sweep20k_init35_alpha1_switch123$clustering)
 # got 8 clusters!
 
+# try same thing as above but with different seed:
+runInfoObj_seed456 = profRegr(yModel = "Normal",
+                              xModel = "Normal",
+                              nSweeps = 20000,
+                              nBurn = 10000,
+                              data = NC_df_log,
+                              output = "output",
+                              covNames = covariate_names,
+                              nClusInit = 35,
+                              run = TRUE,
+                              excludeY = TRUE, 
+                              seed = 456,
+                              alpha = 1,
+                              whichLabelSwitch = "123")
+dissimObj_seed456 = calcDissimilarityMatrix(runInfoObj_seed456)
+clusObj_seed456 = calcOptimalClustering(dissimObj_seed456)
+table(clusObj_seed456$clustering)
+# got 13 clusters.....
+
+#run above with a different seed
+runInfoObj_seed4561 = profRegr(yModel = "Normal",
+                              xModel = "Normal",
+                              nSweeps = 20000,
+                              nBurn = 10000,
+                              data = NC_df_log,
+                              output = "output",
+                              covNames = covariate_names,
+                              nClusInit = 35,
+                              run = TRUE,
+                              excludeY = TRUE, 
+                              seed = 4561,
+                              alpha = 1,
+                              whichLabelSwitch = "123")
+dissimObj_seed4561 = calcDissimilarityMatrix(runInfoObj_seed4561)
+clusObj_seed4561 = calcOptimalClustering(dissimObj_seed4561)
+table(clusObj_seed4561$clustering)
+
 ##########################################
 # add clusters to dataset, rename column to "cluster"
 NC_df = cbind(NC_df, clusObj$clustering)
