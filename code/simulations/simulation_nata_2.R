@@ -61,3 +61,37 @@ runInfoObj_2 = profRegr(yModel = "Normal",
                       excludeY = TRUE, 
                       seed = seed)
 
+# put together pertinent information about this run
+alpha = read.table("output_scratch_alpha.txt")
+kappa1 = read.table("output_scratch_kappa1.txt")
+logpost = read.table("output_scratch_logPost.txt")
+
+dat_20ksweeps_nClusInit35 = cbind(sweep = 1:nSweeps, 
+            alpha = alpha, 
+            kappa = kappa1, 
+            logPost = logpost[,1],
+            logLike = logpost[,2],
+            logPrior = logpost[,3],
+            nClusInit = rep(nClusInit, nSweeps))
+colnames(dat_20ksweeps_nClusInit35)[2] <- "alpha"
+colnames(dat_20ksweeps_nClusInit35)[3] <- "kappa"
+
+dat_20ksweeps_nClusInit35_subset = dat[seq(1, nSweeps, by = 20),]
+
+# plot posterior distribution of alpha
+p = ggplot(dat_subset, aes(x = sweep, y = alpha)) + 
+  geom_line(color = "darkorange1") +
+  theme_minimal() +
+  labs(y = "Posterior Alpha Distribution",
+       x = "Sweeps")
+p
+# alpha doesn't seem to stabilize within 20,000 sweeps.
+
+p_kappa = ggplot(dat_20ksweeps_nClusInit35_subset, aes(x = sweep, y = kappa)) + 
+  geom_line(color = "darkseagreen3") +
+  theme_minimal() +
+  labs(y = "Posterior Kappa Distribution",
+       x = "Sweeps")
+p_kappa
+
+# see if alpha stabilizes for 50,000 sweeps.
